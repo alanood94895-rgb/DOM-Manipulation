@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Notes</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f4f4;
+    padding:30px;
+}
+
+.container{
+    width:800px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px gray;
+}
+
+h1{
+    text-align:center;
+}
+
+input, textarea{
+    width:96%;
+    padding:10px;
+    margin:10px 0;
+    font-size:16px;
+}
+
+textarea{
+    height:100px;
+    resize:none;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+#addBtn{
+    background:green;
+    color:white;
+}
+
+.note-card{
+    background:#eeeeee;
+    padding:15px;
+    margin-top:15px;
+    border-radius:8px;
+    position:relative;
+}
+
+.delete-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:crimson;
+    color:white;
+}
+
+#notesContainer{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:15px;
+    margin-top:20px;
+}
+
+#counter{
+    margin-top:15px;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>My Notes</h1>
+
+<input type="text" id="titleInput" placeholder="Note Title">
+
+<textarea id="contentInput" placeholder="Write your note..."></textarea>
+
+<button id="addBtn">Add Note</button>
+
+<br><br>
+
+<input type="text" id="searchInput" placeholder="Search notes...">
+
+<p id="counter">Total Notes: 0</p>
+
+<div id="notesContainer"></div>
+
+</div>
+
+<script>
+
+    // Array to store notes
+    let notes = [];
+
+    // Select elements
+    const titleInput = document.getElementById("titleInput");
+    const contentInput = document.getElementById("contentInput");
+    const addBtn = document.getElementById("addBtn");
+    const searchInput = document.getElementById("searchInput");
+    const notesContainer = document.getElementById("notesContainer");
+    const counter = document.getElementById("counter");
+
+    // Add note button
+    addBtn.addEventListener("click", addNote);
+
+    // Search input
+    searchInput.addEventListener("input", function(){
+        searchNotes(this.value);
+    });
+
+    // Add new note
+    function addNote(){
+
+        const title = titleInput.value.trim();
+        const content = contentInput.value.trim();
+
+        if(title === ""){
+            alert("Please enter a note title.");
+            return;
+        }
+
+        // Create note object
+        const note = {
+            id: Date.now(),
+            title: title,
+            content: content
+        };
+
+        notes.push(note);
+
+        saveNotes();
+
+        renderNotes();
+
+        // Clear inputs
+        titleInput.value = "";
+        contentInput.value = "";
+    }
+
+    // Display notes
+    function renderNotes(noteArray = notes){
+
+        notesContainer.innerHTML = "";
+
+        noteArray.forEach(function(note){
+
+            const card = document.createElement("div");
+
+            card.className = "note-card";
+
+            card.dataset.noteId = note.id;
+
+            card.innerHTML = `
+                <h3>${note.title}</h3>
+                <p>${note.content}</p>
+                <button class="delete-btn">Delete</button>
+            `;
+
+            notesContainer.appendChild(card);
+
+        });
+
+        counter.textContent = "Total Notes: " + noteArray.length;
+
+    }
+
+    // Event delegation for delete button
+    notesContainer.addEventListener("click", function(event){
+
+        if(event.target.classList.contains("delete-btn")){
+
+            const card = event.target.parentElement;
+
+            const noteId = Number(card.dataset.noteId);
+
+            deleteNote(noteId);
+
+        }
+
+    });
+
+    // Delete note
+    function deleteNote(noteId){
+
+        notes = notes.filter(function(note){
+            return note.id !== noteId;
+        });
+
+        saveNotes();
+
+        renderNotes();
+
+    }
+
+    // Save notes to localStorage
+    function saveNotes(){
+
+        localStorage.setItem("notesData", JSON.stringify(notes));
+
+    }
+
+    function loadNotes(){
+
+        const data = localStorage.getItem("notesData");
+
+        if(data){
+
+            notes = JSON.parse(data);
+
+        }else{
+
+            notes = [];
+
+        }
+
+        renderNotes();
+
+    }
+
+    // Search notes
+    function searchNotes(query){
+
+        query = query.toLowerCase();
+
+        const filtered = notes.filter(function(note){
+
+            return note.title.toLowerCase().includes(query) ||
+                   note.content.toLowerCase().includes(query);
+
+        });
+
+        renderNotes(filtered);
+
+    }
+
+    loadNotes();
+
+</script>
+
+</body>
+</html>

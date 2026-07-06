@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Quiz</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f2f5;
+    color: #2b2b2b;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #222;
+    margin-bottom: 25px;
+  }
+
+  #quizContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 25px;
+  }
+
+  .question-card {
+    background: #fff;
+    padding: 18px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    border: 3px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .question-card h3 {
+    margin-top: 0;
+    font-size: 1.05rem;
+    color: #333;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option {
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #fafafa;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .option:hover {
+    background: #eef3f8;
+  }
+
+  .option.selected {
+    background: #d6e6f5;
+    border-color: #2a5d8f;
+    font-weight: 600;
+  }
+
+  .option.correct-answer {
+    background: #d4f5d4;
+    border-color: #4caf50;
+    font-weight: 600;
+  }
+
+  .option.wrong-answer {
+    background: #f8d7d7;
+    border-color: #b23a3a;
+  }
+
+  .option.disabled {
+    cursor: not-allowed;
+  }
+
+  .question-card.correct-card {
+    border-color: #4caf50;
+  }
+
+  .question-card.incorrect-card {
+    border-color: #b23a3a;
+  }
+
+  .question-card.unanswered-card {
+    border-color: #e0a800;
+  }
+
+  .button-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  #submitBtn,
+  #resetBtn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #fff;
+    transition: background 0.2s ease;
+  }
+
+  #submitBtn {
+    background: #2a5d8f;
+  }
+
+  #submitBtn:hover {
+    background: #1f4a72;
+  }
+
+  #resetBtn {
+    background: #6c757d;
+  }
+
+  #resetBtn:hover {
+    background: #565e64;
+  }
+
+  #resultDisplay {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #222;
+    min-height: 1.5em;
+  }
+</style>
+</head>
+<body>
+
+  <h1>JavaScript Quiz</h1>
+
+  <div id="quizContainer"></div>
+
+  <div class="button-row">
+    <button id="submitBtn">Submit Quiz</button>
+    <button id="resetBtn">Reset Quiz</button>
+  </div>
+
+  <p id="resultDisplay"></p>
+
+  <script>
+    const questions = [
+      {
+        question: '1. Which keyword declares a variable that cannot be reassigned?',
+        options: ['var', 'let', 'const', 'static'],
+        correctAnswer: 2
+      },
+      {
+        question: '2. Which method adds a new element to the end of an array?',
+        options: ['push()', 'pop()', 'shift()', 'unshift()'],
+        correctAnswer: 0
+      },
+      {
+        question: '3. What does the DOM stand for?',
+        options: [
+          'Data Object Model',
+          'Document Object Model',
+          'Display Object Management',
+          'Document Oriented Middleware'
+        ],
+        correctAnswer: 1
+      },
+      {
+        question: '4. Which operator checks both value and type for equality?',
+        options: ['==', '=', '===', '!='],
+        correctAnswer: 2
+      },
+      {
+        question: '5. Which method selects an element by its id attribute?',
+        options: [
+          'document.querySelectorAll()',
+          'document.getElementsByClassName()',
+          'document.getElementById()',
+          'document.createElement()'
+        ],
+        correctAnswer: 2
+      }
+    ];
+
+    const quizContainer = document.getElementById('quizContainer');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultDisplay = document.getElementById('resultDisplay');
+
+    let quizSubmitted = false;
+
+    function loadQuestions() {
+      quizContainer.innerHTML = '';
+
+      questions.forEach((questionData, questionIndex) => {
+        const questionCard = document.createElement('div');
+        questionCard.className = 'question-card';
+        questionCard.dataset.questionIndex = questionIndex;
+
+        const questionTitle = document.createElement('h3');
+        questionTitle.textContent = questionData.question;
+        questionCard.appendChild(questionTitle);
+
+        const optionsList = document.createElement('div');
+        optionsList.className = 'options-list';
+
+        questionData.options.forEach((optionText, optionIndex) => {
+          const optionEl = document.createElement('div');
+          optionEl.className = 'option';
+          optionEl.textContent = optionText;
+          optionEl.dataset.optionIndex = optionIndex;
+
+          optionsList.appendChild(optionEl);
+        });
+
+        questionCard.appendChild(optionsList);
+        quizContainer.appendChild(questionCard);
+      });
+    }
+
+    function selectAnswer(questionIndex, optionIndex) {
+      if (quizSubmitted) return;
+
+      const questionCard = quizContainer.querySelector(
+        `.question-card[data-question-index="${questionIndex}"]`
+      );
+      if (!questionCard) return;
+
+      const allOptions = questionCard.querySelectorAll('.option');
+      allOptions.forEach((opt) => opt.classList.remove('selected'));
+
+      const chosenOption = questionCard.querySelector(
+        `.option[data-option-index="${optionIndex}"]`
+      );
+      if (chosenOption) {
+        chosenOption.classList.add('selected');
+      }
+    }
+
+    quizContainer.addEventListener('click', (event) => {
+      const clickedOption = event.target.closest('.option');
+      if (!clickedOption) return; // Click wasn't on an option.
+
+      const questionCard = clickedOption.closest('.question-card');
+      if (!questionCard) return;
+
+      const questionIndex = Number(questionCard.dataset.questionIndex);
+      const optionIndex = Number(clickedOption.dataset.optionIndex);
+
+      selectAnswer(questionIndex, optionIndex);
+    });
+
+    
+    function submitQuiz() {
+      if (quizSubmitted) return;
+
+      let correctCount = 0;
+      let unansweredCount = 0;
+
+      const allQuestionCards = quizContainer.querySelectorAll('.question-card');
+
+      allQuestionCards.forEach((card) => {
+        const questionIndex = Number(card.dataset.questionIndex);
+        const correctIndex = questions[questionIndex].correctAnswer;
+
+        const selectedOption = card.querySelector('.option.selected');
+        const correctOptionEl = card.querySelector(
+          `.option[data-option-index="${correctIndex}"]`
+        );
+
+        if (!selectedOption) {
+          unansweredCount++;
+          card.classList.add('unanswered-card');
+          correctOptionEl.classList.add('correct-answer');
+        } else {
+          const selectedIndex = Number(selectedOption.dataset.optionIndex);
+
+          if (selectedIndex === correctIndex) {
+            correctCount++;
+            card.classList.add('correct-card');
+            selectedOption.classList.add('correct-answer');
+          } else {
+            card.classList.add('incorrect-card');
+            selectedOption.classList.add('wrong-answer');
+            correctOptionEl.classList.add('correct-answer');
+          }
+        }
+
+        const allOptionsInCard = card.querySelectorAll('.option');
+        allOptionsInCard.forEach((opt) => opt.classList.add('disabled'));
+      });
+
+      quizSubmitted = true;
+
+      let resultText = `You scored ${correctCount} out of ${questions.length}!`;
+      if (unansweredCount > 0) {
+        resultText += ` (${unansweredCount} question${unansweredCount > 1 ? 's' : ''} left unanswered.)`;
+      }
+      resultDisplay.textContent = resultText;
+    }
+
+    function resetQuiz() {
+      quizSubmitted = false;
+      resultDisplay.textContent = '';
+      loadQuestions(); 
+    }
+
+    submitBtn.addEventListener('click', submitQuiz);
+    resetBtn.addEventListener('click', resetQuiz);
+
+    loadQuestions();
+  </script>
+
+</body>
+</html>
