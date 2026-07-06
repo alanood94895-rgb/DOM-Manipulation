@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Book List</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f1ea;
+            color: #2b2b2b;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #3b2f2f;
+            margin-bottom: 5px;
+        }
+
+        #bookCount {
+            text-align: center;
+            color: #6b5f5f;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-row input {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        #addBtn {
+            padding: 10px 20px;
+            background: #5b3a29;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        #addBtn:hover {
+            background: #432a1e;
+        }
+
+        #bookContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .book-card {
+            background: #fff;
+            padding: 15px 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #5b3a29;
+        }
+
+        .book-info {
+            font-size: 1rem;
+        }
+
+        .delete-btn {
+            padding: 6px 12px;
+            background: #b23a3a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #8a2b2b;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>My Book List</h1>
+    <p id="bookCount">Total books: 0</p>
+
+    <div class="form-row">
+        <input type="text" id="titleInput" placeholder="Book title">
+        <input type="text" id="authorInput" placeholder="Author name">
+        <button id="addBtn">Add Book</button>
+    </div>
+
+    <div id="bookContainer"></div>
+
+    <script>
+        // SELECT ELEMENTS 
+        const titleInput = document.getElementById('titleInput');
+        const authorInput = document.getElementById('authorInput');
+        const addBtn = document.getElementById('addBtn');
+        const bookContainer = document.getElementById('bookContainer');
+        const bookCountDisplay = document.getElementById('bookCount');
+
+        let bookCount = 0;
+
+        // UPDATE COUNTER 
+        function updateBookCount() {
+            bookCountDisplay.textContent = `Total books: ${bookCount}`;
+        }
+
+        //  ADD BOOK FUNCTION 
+        function addBook() {
+            const title = titleInput.value.trim();
+            const author = authorInput.value.trim();
+
+            if (title === '' || author === '') {
+                alert('Please enter both a title and an author before adding a book.');
+                return;
+            }
+
+            const bookCard = document.createElement('div');
+            bookCard.className = 'book-card';
+
+            const bookInfo = document.createElement('div');
+            bookInfo.className = 'book-info';
+            bookInfo.innerHTML = `<strong>Title:</strong> ${title} | <strong>Author:</strong> ${author}`;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = 'Delete';
+
+            deleteBtn.addEventListener('click', () => deleteBook(bookCard));
+
+            bookCard.appendChild(bookInfo);
+            bookCard.appendChild(deleteBtn);
+            bookContainer.appendChild(bookCard);
+
+            titleInput.value = '';
+            authorInput.value = '';
+
+            bookCount++;
+            updateBookCount();
+
+            titleInput.focus();
+        }
+
+        // DELETE BOOK FUNCTION 
+        function deleteBook(bookElement) {
+            bookElement.remove();
+            bookCount--;
+            updateBookCount();
+        }
+
+        // EVENT LISTENERS
+        addBtn.addEventListener('click', addBook);
+
+        titleInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addBook();
+        });
+        authorInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addBook();
+        });
+
+        updateBookCount();
+    </script>
+
+</body>
+</html>
