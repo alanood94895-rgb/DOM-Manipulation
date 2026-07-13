@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+h1 {
+    text-align: center;
+}
+
+.question-card {
+    border: 1px solid black;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: white;
+}
+
+.option {
+    border: 1px solid gray;
+    padding: 8px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.option:hover {
+    background: lightgray;
+}
+
+.selected {
+    background: lightblue;
+}
+
+.correct {
+    border: 2px solid green;
+}
+
+.incorrect {
+    border: 2px solid red;
+}
+
+.correct-answer {
+    background: lightgreen;
+}
+
+button {
+    padding: 8px 15px;
+    margin: 5px;
+}
+
+#resultDisplay {
+    margin-top: 15px;
+    font-weight: bold;
+}

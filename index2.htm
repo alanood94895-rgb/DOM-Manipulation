@@ -3,106 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Do List</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-            padding: 30px;
-        }
-
-        .container {
-            width: 500px;
-            margin: auto;
-            background: rgb(201, 57, 57);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgb(163, 66, 41);
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        input {
-            width: 95%;
-            padding: 10px;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        button {
-            padding: 8px 15px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #addBtn {
-            background-color: rgb(0, 104, 0);
-            color: rgb(248, 244, 244);
-        }
-
-        .filter-btn {
-            background-color: #555;
-            color: white;
-        }
-
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #eeeeee;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
-
-        .completed span {
-            text-decoration: line-through;
-            color: gray;
-        }
-
-        .toggle-btn {
-            background-color: orange;
-            color: white;
-        }
-
-        .delete-btn {
-            background-color: crimson;
-            color: white;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 5px;
-        }
-
-        #counter {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-    </style>
-
+    <title>My To-Do List</title>
+    <link rel="stylesheet" href="style2.css">
 </head>
 <body>
 
-<div class="container">
+    <h1>My To-Do List</h1>
 
-    <h1>To Do List</h1>
-
-    <input type="text" id="taskInput" placeholder="Enter a task">
+    <label for="taskInput">Enter Task</label>
+    <input type="text" id="taskInput">
 
     <button id="addBtn">Add Task</button>
 
-    <br><br>
-
-    <button id="filterAll" class="filter-btn">All</button>
-    <button id="filterActive" class="filter-btn">Active</button>
-    <button id="filterCompleted" class="filter-btn">Completed</button>
+    <div class="filters">
+        <button id="filterAll">All</button>
+        <button id="filterActive">Active</button>
+        <button id="filterCompleted">Completed</button>
+    </div>
 
     <p id="counter">
         Total: 0 | Active: 0 | Completed: 0
@@ -110,150 +27,7 @@
 
     <div id="taskContainer"></div>
 
-</div>
-
-<script>
-
-    // Select HTML elements
-    const taskInput = document.getElementById("taskInput");
-    const addBtn = document.getElementById("addBtn");
-    const taskContainer = document.getElementById("taskContainer");
-
-    const filterAll = document.getElementById("filterAll");
-    const filterActive = document.getElementById("filterActive");
-    const filterCompleted = document.getElementById("filterCompleted");
-
-    const counter = document.getElementById("counter");
-
-    
-    addBtn.addEventListener("click", addTask);
-
-    // add task
-    function addTask() {
-
-        const taskText = taskInput.value.trim();
-
-        // Validate input
-        if (taskText === "") {
-            alert("Please enter a task.");
-            return;
-        }
-
-        // Create task item
-        const taskItem = document.createElement("div");
-        taskItem.className = "task-item";
-
-        taskItem.innerHTML = `
-            <span>${taskText}</span>
-
-            <div class="buttons">
-                <button class="toggle-btn">✓</button>
-                <button class="delete-btn">✗</button>
-            </div>
-        `;
-
-        // Add task to container
-        taskContainer.appendChild(taskItem);
-
-        // Clear input
-        taskInput.value = "";
-
-        updateCounter();
-    }
-
-    // Event Delegation
-    taskContainer.addEventListener("click", function(event){
-
-        const taskItem = event.target.closest(".task-item");
-
-        if(event.target.classList.contains("toggle-btn")){
-            toggleTaskStatus(taskItem);
-        }
-
-        if(event.target.classList.contains("delete-btn")){
-            deleteTask(taskItem);
-        }
-
-    });
-
-    // Toggle completed class
-    function toggleTaskStatus(taskElement){
-        taskElement.classList.toggle("completed");
-        updateCounter();
-    }
-
-    // Delete task
-    function deleteTask(taskElement){
-        taskElement.remove();
-        updateCounter();
-    }
-
-    // Filter tasks
-    function filterTasks(filterType){
-
-        const tasks = document.querySelectorAll(".task-item");
-
-        tasks.forEach(function(task){
-
-            if(filterType === "all"){
-                task.style.display = "flex";
-            }
-
-            else if(filterType === "active"){
-
-                if(task.classList.contains("completed")){
-                    task.style.display = "none";
-                }else{
-                    task.style.display = "flex";
-                }
-
-            }
-
-            else if(filterType === "completed"){
-
-                if(task.classList.contains("completed")){
-                    task.style.display = "flex";
-                }else{
-                    task.style.display = "none";
-                }
-
-            }
-
-        });
-
-    }
-
-    // Filter button events
-    filterAll.addEventListener("click", function(){
-        filterTasks("all");
-    });
-
-    filterActive.addEventListener("click", function(){
-        filterTasks("active");
-    });
-
-    filterCompleted.addEventListener("click", function(){
-        filterTasks("completed");
-    });
-
-    // Update task counter
-    function updateCounter(){
-
-        const tasks = document.querySelectorAll(".task-item");
-
-        const completed =
-            document.querySelectorAll(".task-item.completed").length;
-
-        const active = tasks.length - completed;
-
-        counter.textContent =
-            "Total: " + tasks.length +
-            " | Active: " + active +
-            " | Completed: " + completed;
-
-    }
-
-</script>
+    <script src="script.js"></script>
 
 </body>
 </html>

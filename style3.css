@@ -1,0 +1,50 @@
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 150px;
+        }
+
+        button {
+            padding: 6px 12px;
+            margin: 3px;
+            cursor: pointer;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .controls button {
+            width: 35px;
+        }
+
+        .remove-btn {
+            background: red;
+            color: white;
+            border: none;
+        }
+
+        #totalDisplay {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+ 
